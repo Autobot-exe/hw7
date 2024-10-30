@@ -1,7 +1,9 @@
 package org.example;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class HomeWork {
 
@@ -11,7 +13,20 @@ public class HomeWork {
      * <a href="https://acm.timus.ru/problem.aspx?space=1&num=1439">https://acm.timus.ru/problem.aspx?space=1&num=1439</a>
      */
     public List<Integer> getOriginalDoorNumbers(int maxDoors, List<Action> actionList) {
-        return null;
+        var destroyedRooms = new TreeMap<Integer, Integer>();
+        var output = new ArrayList<Integer>();
+
+        for (var action : actionList) {
+            var roomNumber = action.getDoorNumber();
+            if (action.isLook()) {
+                var destroyedMap = destroyedRooms.headMap(roomNumber, true);
+                var shift = destroyedMap.getOrDefault(roomNumber, 0);
+                output.add(roomNumber + shift);
+            } else {
+                destroyedRooms.merge(roomNumber, 1, (k, v) -> v + 1);
+            }
+        }
+        return output;
     }
 
     /**
@@ -27,8 +42,20 @@ public class HomeWork {
      * <b>2</b> 4 _ => 2 <br/>
      * _ <b>4</b> => 4
      */
-    public List<Integer> getLeaveOrder(int maxUnits, int leaveInterval) {
-        return null;
-    }
+    public List<Integer> getLeaveOrder(int totalSoldiers, int interval) {
+        List<Integer> remainingSoldiers = new ArrayList<>();
+        List<Integer> leavingOrder = new ArrayList<>();
+        for (int soldierNumber = 1; soldierNumber <= totalSoldiers; soldierNumber++) {
+            remainingSoldiers.add(soldierNumber);
+        }
 
+        int currentIndex = 0;
+
+        while (!remainingSoldiers.isEmpty()) {
+            currentIndex = (currentIndex + interval - 1) % remainingSoldiers.size();
+            leavingOrder.add(remainingSoldiers.remove(currentIndex));
+        }
+
+        return leavingOrder;
+    }
 }
